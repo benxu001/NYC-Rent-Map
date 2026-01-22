@@ -40,7 +40,7 @@ const MapModule = {
      */
     style: function(feature) {
         const zipcode = feature.properties.zipcode;
-        const rent = DataUtils.getRentForZip(zipcode);
+        const rent = DataUtils.getEndRentForZip(zipcode);
 
         return {
             fillColor: DataUtils.getColor(rent),
@@ -159,14 +159,14 @@ const MapModule = {
     },
 
     /**
-     * Update map colors based on current date
+     * Update map colors based on end date
      */
     updateMapColors: function() {
         if (!this.geojsonLayer) return;
 
         this.geojsonLayer.eachLayer(function(layer) {
             const zipcode = layer.feature.properties.zipcode;
-            const rent = DataUtils.getRentForZip(zipcode);
+            const rent = DataUtils.getEndRentForZip(zipcode);
             const newColor = DataUtils.getColor(rent);
 
             if (MapModule.selectedLayer === layer) {
@@ -198,14 +198,37 @@ const MapModule = {
         const hoverPanel = document.getElementById('hover-panel');
 
         if (!props) {
+            // Show aggregated NYC data when not hovering
+            const nycData = DataUtils.getNYCAggregateData();
+            const changeClass = nycData.percentChange !== null ? (nycData.percentChange >= 0 ? 'change-positive' : 'change-negative') : '';
+
             hoverPanel.innerHTML = `
+                <div class="hover-info">
+                    <h3>All NYC</h3>
+                    <p class="neighborhood">Average across ${nycData.zipCount} zip codes</p>
+                    <div class="hover-rent-row end-rent">
+                        <span class="hover-rent-label">End:</span>
+                        <span class="hover-rent-value">${DataUtils.formatRent(nycData.endRent)}</span>
+                    </div>
+                    <div class="hover-rent-row">
+                        <span class="hover-rent-label">Start:</span>
+                        <span class="hover-rent-value">${DataUtils.formatRent(nycData.startRent)}</span>
+                    </div>
+                    <div class="hover-rent-row">
+                        <span class="hover-rent-label">Change:</span>
+                        <span class="hover-rent-value ${changeClass}">${DataUtils.formatPercentChange(nycData.percentChange)}</span>
+                    </div>
+                </div>
                 <p class="instruction">Hover over a zip code to see details</p>
                 <p class="instruction">Click to pin and see yearly data</p>
             `;
             return;
         }
 
-        const rent = DataUtils.getRentForZip(props.zipcode);
+        const startRent = DataUtils.getStartRentForZip(props.zipcode);
+        const endRent = DataUtils.getEndRentForZip(props.zipcode);
+        const percentChange = DataUtils.getPercentChange(startRent, endRent);
+        const changeClass = percentChange !== null ? (percentChange >= 0 ? 'change-positive' : 'change-negative') : '';
         const neighborhood = props.PO_NAME || props.neighborhood || '';
         const borough = props.borough || '';
 
@@ -214,7 +237,18 @@ const MapModule = {
                 <h3>${props.zipcode}</h3>
                 ${neighborhood ? `<p class="neighborhood">${neighborhood}</p>` : ''}
                 ${borough ? `<p class="borough">${borough}</p>` : ''}
-                <p class="rent-value">${DataUtils.formatRent(rent)}</p>
+                <div class="hover-rent-row end-rent">
+                    <span class="hover-rent-label">End:</span>
+                    <span class="hover-rent-value">${DataUtils.formatRent(endRent)}</span>
+                </div>
+                <div class="hover-rent-row">
+                    <span class="hover-rent-label">Start:</span>
+                    <span class="hover-rent-value">${DataUtils.formatRent(startRent)}</span>
+                </div>
+                <div class="hover-rent-row">
+                    <span class="hover-rent-label">Change:</span>
+                    <span class="hover-rent-value ${changeClass}">${DataUtils.formatPercentChange(percentChange)}</span>
+                </div>
             </div>
         `;
     },
@@ -236,8 +270,16 @@ const MapModule = {
         document.getElementById('detail-neighborhood').textContent = neighborhood;
         document.getElementById('detail-borough').textContent = borough;
 
-        const rent = DataUtils.getRentForZip(props.zipcode);
-        document.getElementById('detail-rent-value').textContent = DataUtils.formatRent(rent);
+        const startRent = DataUtils.getStartRentForZip(props.zipcode);
+        const endRent = DataUtils.getEndRentForZip(props.zipcode);
+        const percentChange = DataUtils.getPercentChange(startRent, endRent);
+
+        document.getElementById('detail-start-rent').textContent = DataUtils.formatRent(startRent);
+        document.getElementById('detail-end-rent').textContent = DataUtils.formatRent(endRent);
+
+        const changeEl = document.getElementById('detail-percent-change');
+        changeEl.textContent = DataUtils.formatPercentChange(percentChange);
+        changeEl.className = 'change-value ' + (percentChange !== null ? (percentChange >= 0 ? 'change-positive' : 'change-negative') : '');
 
         const yearlyList = document.getElementById('yearly-list');
         const yearlyAvg = props.yearly_avg || {};
@@ -276,22 +318,29 @@ const MapModule = {
     },
 
     /**
-     * Create and populate the legend
+     * Create and add legend control to map
      */
     createLegend: function() {
-        const legendScale = document.getElementById('legend-scale');
-        const items = DataUtils.getLegendItems();
+        const legend = L.control({ position: 'bottomright' });
 
-        let html = '';
-        for (const item of items) {
-            html += `
-                <div class="legend-item">
-                    <span class="legend-color" style="background:${item.color}"></span>
-                    <span class="legend-label">${item.label}</span>
-                </div>
-            `;
-        }
+        legend.onAdd = function() {
+            const div = L.DomUtil.create('div', 'map-legend');
+            const items = DataUtils.getLegendItems();
 
-        legendScale.innerHTML = html;
+            let html = '<h4>Rent Scale</h4>';
+            for (const item of items) {
+                html += `
+                    <div class="legend-item">
+                        <span class="legend-color" style="background:${item.color}"></span>
+                        <span class="legend-label">${item.label}</span>
+                    </div>
+                `;
+            }
+
+            div.innerHTML = html;
+            return div;
+        };
+
+        legend.addTo(this.map);
     }
 };

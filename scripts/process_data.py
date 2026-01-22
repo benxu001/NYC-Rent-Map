@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
 Process NYC zip code boundaries and Zillow rent data.
-Merges the datasets with 5-year historical time series.
+Merges the datasets with historical time series from 2015.
 """
 
 import json
 import csv
 import os
-from datetime import datetime, timedelta
 
 # Paths
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -32,7 +31,7 @@ def load_geojson():
 
 def load_zillow_timeseries():
     """
-    Load Zillow ZORI data with full time series (last 5 years).
+    Load Zillow ZORI data with full time series from 2015.
     Returns:
         - rent_data: dict mapping zipcode -> {date: rent_value}
         - available_dates: sorted list of date strings
@@ -44,15 +43,12 @@ def load_zillow_timeseries():
         reader = csv.DictReader(f)
         fieldnames = reader.fieldnames
 
-        # Find all date columns (format: YYYY-MM-DD)
+        # Find all date columns (format: YYYY-MM-DD) from 2015 onwards
         date_columns = [col for col in fieldnames if col.startswith('20')]
-
-        # Filter to last 5 years (60 months)
-        cutoff_year = datetime.now().year - 5
-        recent_dates = [d for d in date_columns if int(d[:4]) >= cutoff_year]
+        recent_dates = [d for d in date_columns if int(d[:4]) >= 2015]
 
         print(f"Found {len(date_columns)} total date columns")
-        print(f"Using {len(recent_dates)} dates from last 5 years")
+        print(f"Using {len(recent_dates)} dates from 2015 onwards")
 
         for row in reader:
             zipcode = row['RegionName']
@@ -164,7 +160,7 @@ def main():
     geojson = load_geojson()
     print(f"   Loaded {len(geojson['features'])} zip code polygons")
 
-    print("\n2. Loading Zillow rent data (5-year time series)...")
+    print("\n2. Loading Zillow rent data (from 2015)...")
     rent_data, available_dates = load_zillow_timeseries()
 
     # Merge

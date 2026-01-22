@@ -7,7 +7,8 @@ const DataUtils = {
     // Time series data storage
     timeSeries: null,
     availableDates: [],
-    currentDateIndex: 0,
+    startDateIndex: 0,
+    endDateIndex: 0,
 
     // Color scale configuration - sequential blue palette (colorblind-friendly)
     colorScale: {
@@ -92,7 +93,8 @@ const DataUtils = {
             const data = await response.json();
             this.timeSeries = data.data;
             this.availableDates = data.dates;
-            this.currentDateIndex = this.availableDates.length - 1;
+            this.startDateIndex = 0;
+            this.endDateIndex = this.availableDates.length - 1;
             return true;
         } catch (error) {
             console.error('Error loading time series:', error);
@@ -101,21 +103,99 @@ const DataUtils = {
     },
 
     /**
-     * Get current selected date
+     * Get start date
      */
-    getCurrentDate: function() {
-        return this.availableDates[this.currentDateIndex] || '';
+    getStartDate: function() {
+        return this.availableDates[this.startDateIndex] || '';
     },
 
     /**
-     * Get rent for a specific zip code at current date
+     * Get end date
      */
-    getRentForZip: function(zipcode) {
+    getEndDate: function() {
+        return this.availableDates[this.endDateIndex] || '';
+    },
+
+    /**
+     * Get rent for a specific zip code at start date
+     */
+    getStartRentForZip: function(zipcode) {
         if (!this.timeSeries || !this.timeSeries[zipcode]) {
             return null;
         }
-        const currentDate = this.getCurrentDate();
-        return this.timeSeries[zipcode][currentDate] || null;
+        const startDate = this.getStartDate();
+        return this.timeSeries[zipcode][startDate] || null;
+    },
+
+    /**
+     * Get rent for a specific zip code at end date
+     */
+    getEndRentForZip: function(zipcode) {
+        if (!this.timeSeries || !this.timeSeries[zipcode]) {
+            return null;
+        }
+        const endDate = this.getEndDate();
+        return this.timeSeries[zipcode][endDate] || null;
+    },
+
+    /**
+     * Calculate percentage change between start and end rent
+     */
+    getPercentChange: function(startRent, endRent) {
+        if (startRent === null || endRent === null || startRent === 0) {
+            return null;
+        }
+        return ((endRent - startRent) / startRent) * 100;
+    },
+
+    /**
+     * Format percentage change
+     */
+    formatPercentChange: function(percent) {
+        if (percent === null) {
+            return 'N/A';
+        }
+        const sign = percent >= 0 ? '+' : '';
+        return `${sign}${percent.toFixed(1)}%`;
+    },
+
+    /**
+     * Get aggregated NYC-wide rent data
+     */
+    getNYCAggregateData: function() {
+        if (!this.timeSeries) {
+            return { startRent: null, endRent: null, percentChange: null };
+        }
+
+        let totalStartRent = 0;
+        let totalEndRent = 0;
+        let count = 0;
+
+        for (const zipcode in this.timeSeries) {
+            const startRent = this.getStartRentForZip(zipcode);
+            const endRent = this.getEndRentForZip(zipcode);
+
+            if (startRent !== null && endRent !== null) {
+                totalStartRent += startRent;
+                totalEndRent += endRent;
+                count++;
+            }
+        }
+
+        if (count === 0) {
+            return { startRent: null, endRent: null, percentChange: null, zipCount: 0 };
+        }
+
+        const avgStartRent = totalStartRent / count;
+        const avgEndRent = totalEndRent / count;
+        const percentChange = this.getPercentChange(avgStartRent, avgEndRent);
+
+        return {
+            startRent: avgStartRent,
+            endRent: avgEndRent,
+            percentChange: percentChange,
+            zipCount: count
+        };
     },
 
     /**

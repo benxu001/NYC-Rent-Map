@@ -3,15 +3,21 @@
  */
 
 const App = {
-    slider: null,
-    currentMonthDisplay: null,
+    startSlider: null,
+    endSlider: null,
+    startDateDisplay: null,
+    endDateDisplay: null,
+    percentChangeDisplay: null,
 
     /**
      * Initialize the application
      */
     init: async function() {
-        this.slider = document.getElementById('time-slider');
-        this.currentMonthDisplay = document.getElementById('current-month');
+        this.startSlider = document.getElementById('start-slider');
+        this.endSlider = document.getElementById('end-slider');
+        this.startDateDisplay = document.getElementById('start-date');
+        this.endDateDisplay = document.getElementById('end-date');
+        this.percentChangeDisplay = document.getElementById('percent-change');
 
         // Initialize the map
         MapModule.init();
@@ -45,7 +51,7 @@ const App = {
     },
 
     /**
-     * Setup the time slider
+     * Setup the time range sliders
      */
     setupSlider: function() {
         const dates = DataUtils.availableDates;
@@ -55,24 +61,55 @@ const App = {
             return;
         }
 
-        this.slider.min = 0;
-        this.slider.max = dates.length - 1;
-        this.slider.value = dates.length - 1;
+        const maxIndex = dates.length - 1;
 
-        document.getElementById('slider-start').textContent = DataUtils.formatDateShort(dates[0]);
-        document.getElementById('slider-end').textContent = DataUtils.formatDateShort(dates[dates.length - 1]);
+        this.startSlider.min = 0;
+        this.startSlider.max = maxIndex;
+        this.startSlider.value = 0;
 
-        this.updateCurrentMonthDisplay();
+        this.endSlider.min = 0;
+        this.endSlider.max = maxIndex;
+        this.endSlider.value = maxIndex;
+
+        document.getElementById('slider-min').textContent = DataUtils.formatDateShort(dates[0]);
+        document.getElementById('slider-max').textContent = DataUtils.formatDateShort(dates[maxIndex]);
+
+        this.updateDateDisplay();
     },
 
     /**
      * Setup event listeners
      */
     setupEventListeners: function() {
-        // Slider change event
-        this.slider.addEventListener('input', (e) => {
-            DataUtils.currentDateIndex = parseInt(e.target.value);
-            this.updateCurrentMonthDisplay();
+        // Start slider change event
+        this.startSlider.addEventListener('input', (e) => {
+            let startVal = parseInt(e.target.value);
+            let endVal = parseInt(this.endSlider.value);
+
+            // Prevent start from exceeding end
+            if (startVal > endVal) {
+                startVal = endVal;
+                this.startSlider.value = startVal;
+            }
+
+            DataUtils.startDateIndex = startVal;
+            this.updateDateDisplay();
+            MapModule.updateMapColors();
+        });
+
+        // End slider change event
+        this.endSlider.addEventListener('input', (e) => {
+            let endVal = parseInt(e.target.value);
+            let startVal = parseInt(this.startSlider.value);
+
+            // Prevent end from going below start
+            if (endVal < startVal) {
+                endVal = startVal;
+                this.endSlider.value = endVal;
+            }
+
+            DataUtils.endDateIndex = endVal;
+            this.updateDateDisplay();
             MapModule.updateMapColors();
         });
 
@@ -90,11 +127,55 @@ const App = {
     },
 
     /**
-     * Update the current month display
+     * Update the date range display
      */
-    updateCurrentMonthDisplay: function() {
-        const currentDate = DataUtils.getCurrentDate();
-        this.currentMonthDisplay.textContent = DataUtils.formatDate(currentDate);
+    updateDateDisplay: function() {
+        const startDate = DataUtils.getStartDate();
+        const endDate = DataUtils.getEndDate();
+
+        this.startDateDisplay.textContent = DataUtils.formatDate(startDate);
+        this.endDateDisplay.textContent = DataUtils.formatDate(endDate);
+
+        // Update overall percentage change (average across all zip codes with data)
+        this.updateOverallPercentChange();
+    },
+
+    /**
+     * Update the overall percentage change display
+     */
+    updateOverallPercentChange: function() {
+        if (!DataUtils.timeSeries) {
+            this.percentChangeDisplay.textContent = '--';
+            return;
+        }
+
+        let totalStartRent = 0;
+        let totalEndRent = 0;
+        let count = 0;
+
+        for (const zipcode in DataUtils.timeSeries) {
+            const startRent = DataUtils.getStartRentForZip(zipcode);
+            const endRent = DataUtils.getEndRentForZip(zipcode);
+
+            if (startRent !== null && endRent !== null) {
+                totalStartRent += startRent;
+                totalEndRent += endRent;
+                count++;
+            }
+        }
+
+        if (count > 0) {
+            const avgStartRent = totalStartRent / count;
+            const avgEndRent = totalEndRent / count;
+            const percentChange = DataUtils.getPercentChange(avgStartRent, avgEndRent);
+            const formatted = DataUtils.formatPercentChange(percentChange);
+
+            this.percentChangeDisplay.textContent = formatted;
+            this.percentChangeDisplay.className = percentChange >= 0 ? 'change-positive' : 'change-negative';
+        } else {
+            this.percentChangeDisplay.textContent = 'N/A';
+            this.percentChangeDisplay.className = '';
+        }
     },
 
     /**

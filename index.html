@@ -21,18 +21,32 @@
             <p class="subtitle">Average Rent by Zip Code</p>
         </div>
 
-        <!-- Time Slider Section -->
+        <!-- Time Range Slider Section -->
         <div class="slider-section">
-            <h3>Select Month</h3>
-            <div class="slider-container">
-                <input type="range" id="time-slider" min="0" max="59" value="59">
+            <h3>Select Date Range</h3>
+            <div class="range-slider-container">
+                <div class="range-slider">
+                    <input type="range" id="start-slider" min="0" max="131" value="0">
+                    <input type="range" id="end-slider" min="0" max="131" value="131">
+                </div>
                 <div class="slider-labels">
-                    <span id="slider-start">Jan 2021</span>
-                    <span id="slider-end">Dec 2025</span>
+                    <span id="slider-min">Feb 2015</span>
+                    <span id="slider-max">Dec 2025</span>
                 </div>
             </div>
-            <div class="current-date">
-                <span id="current-month">December 2025</span>
+            <div class="date-range-display">
+                <div class="date-item">
+                    <span class="date-label">Start:</span>
+                    <span id="start-date">February 2015</span>
+                </div>
+                <div class="date-item date-end">
+                    <span class="date-label">End:</span>
+                    <span id="end-date">December 2025</span>
+                </div>
+            </div>
+            <div class="percent-change-display">
+                <span class="change-label">Rent Change:</span>
+                <span id="percent-change">--</span>
             </div>
         </div>
 
@@ -47,9 +61,19 @@
                 <p id="detail-borough"></p>
             </div>
             <div class="detail-rent">
-                <div class="rent-current">
-                    <span class="rent-label">Average Rent</span>
-                    <span id="detail-rent-value" class="rent-value">--</span>
+                <div class="rent-end">
+                    <span class="rent-label">End Rent</span>
+                    <span id="detail-end-rent" class="rent-value-large">--</span>
+                </div>
+                <div class="rent-row">
+                    <div class="rent-item">
+                        <span class="rent-label">Start Rent</span>
+                        <span id="detail-start-rent" class="rent-value">--</span>
+                    </div>
+                    <div class="rent-item">
+                        <span class="rent-label">Change</span>
+                        <span id="detail-percent-change" class="change-value">--</span>
+                    </div>
                 </div>
             </div>
             <div class="yearly-section">
@@ -62,12 +86,6 @@
         <div id="hover-panel" class="hover-panel">
             <p class="instruction">Hover over a zip code to see details</p>
             <p class="instruction">Click to pin and see yearly data</p>
-        </div>
-
-        <!-- Legend -->
-        <div class="legend-section">
-            <h4>Rent Scale</h4>
-            <div id="legend-scale" class="legend-scale"></div>
         </div>
 
         <!-- Attribution -->
