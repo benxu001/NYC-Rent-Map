@@ -188,6 +188,9 @@ const MapModule = {
 
         if (this.selectedZipcode && this.selectedLayer) {
             this.updateDetailPanel(this.selectedLayer.feature.properties);
+        } else {
+            // Update aggregated NYC data when no zip code is selected
+            this.updateHoverDisplay(null);
         }
     },
 
