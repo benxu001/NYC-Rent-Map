@@ -192,6 +192,9 @@ const MapModule = {
             // Update aggregated NYC data when no zip code is selected
             this.updateHoverDisplay(null);
         }
+
+        // Update top 10 list
+        this.updateTop10List();
     },
 
     /**
@@ -345,5 +348,79 @@ const MapModule = {
         };
 
         legend.addTo(this.map);
+    },
+
+    /**
+     * Create and add top 10 zip codes control to map
+     */
+    createTop10Control: function() {
+        const top10 = L.control({ position: 'topright' });
+
+        top10.onAdd = function() {
+            const div = L.DomUtil.create('div', 'top10-panel');
+            div.id = 'top10-panel';
+            div.innerHTML = '<h4>Top 10 by Change</h4><div id="top10-list"></div>';
+
+            // Prevent map interactions when clicking on the panel
+            L.DomEvent.disableClickPropagation(div);
+            L.DomEvent.disableScrollPropagation(div);
+
+            return div;
+        };
+
+        top10.addTo(this.map);
+        this.updateTop10List();
+    },
+
+    /**
+     * Update the top 10 zip codes list
+     */
+    updateTop10List: function() {
+        const listEl = document.getElementById('top10-list');
+        if (!listEl) return;
+
+        const top10 = DataUtils.getTop10ByChange();
+
+        if (top10.length === 0) {
+            listEl.innerHTML = '<p class="no-data">No data available</p>';
+            return;
+        }
+
+        let html = '';
+        for (const item of top10) {
+            const changeClass = item.percentChange >= 0 ? 'change-positive' : 'change-negative';
+            const sign = item.percentChange >= 0 ? '+' : '';
+            html += `
+                <div class="top10-item" data-zipcode="${item.zipcode}">
+                    <span class="top10-zip">${item.zipcode}</span>
+                    <span class="top10-change ${changeClass}">${sign}${item.percentChange.toFixed(1)}%</span>
+                </div>
+            `;
+        }
+
+        listEl.innerHTML = html;
+
+        // Add click handlers
+        const items = listEl.querySelectorAll('.top10-item');
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                const zipcode = item.dataset.zipcode;
+                MapModule.selectZipcode(zipcode);
+            });
+        });
+    },
+
+    /**
+     * Select a zip code by its code (for top 10 clicks)
+     */
+    selectZipcode: function(zipcode) {
+        if (!this.geojsonLayer) return;
+
+        this.geojsonLayer.eachLayer(function(layer) {
+            if (layer.feature.properties.zipcode === zipcode) {
+                // Simulate a click on this layer
+                MapModule.selectFeature({ target: layer });
+            }
+        });
     }
 };

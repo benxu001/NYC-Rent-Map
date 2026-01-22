@@ -42,6 +42,9 @@ const App = {
         // Create legend
         MapModule.createLegend();
 
+        // Create top 10 panel
+        MapModule.createTop10Control();
+
         // Setup event listeners
         this.setupEventListeners();
 

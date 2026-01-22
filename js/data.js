@@ -199,6 +199,37 @@ const DataUtils = {
     },
 
     /**
+     * Get top 10 zip codes by absolute percentage change
+     */
+    getTop10ByChange: function() {
+        if (!this.timeSeries) {
+            return [];
+        }
+
+        const changes = [];
+
+        for (const zipcode in this.timeSeries) {
+            const startRent = this.getStartRentForZip(zipcode);
+            const endRent = this.getEndRentForZip(zipcode);
+            const percentChange = this.getPercentChange(startRent, endRent);
+
+            if (percentChange !== null) {
+                changes.push({
+                    zipcode: zipcode,
+                    percentChange: percentChange,
+                    absChange: Math.abs(percentChange)
+                });
+            }
+        }
+
+        // Sort by absolute change descending
+        changes.sort((a, b) => b.absChange - a.absChange);
+
+        // Return top 10
+        return changes.slice(0, 10);
+    },
+
+    /**
      * Get legend items for the color scale
      */
     getLegendItems: function() {
