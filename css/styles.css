@@ -1,0 +1,443 @@
+/**
+ * NYC Rent Map Styles
+ */
+
+/* Reset and base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                 Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background: #f5f5f5;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 320px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    padding: 20px;
+    background: linear-gradient(135deg, #2171b5, #084594);
+    color: white;
+}
+
+.sidebar-header h1 {
+    font-size: 1.5em;
+    margin-bottom: 5px;
+}
+
+.sidebar-header .subtitle {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+/* Slider Section */
+.slider-section {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.slider-section h3 {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.slider-container {
+    margin-bottom: 10px;
+}
+
+#time-slider {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #e0e0e0;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+#time-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #2171b5;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.1s ease;
+}
+
+#time-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+#time-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: #2171b5;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.75em;
+    color: #999;
+}
+
+.current-date {
+    text-align: center;
+    margin-top: 10px;
+}
+
+#current-month {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #2171b5;
+}
+
+/* Detail Panel */
+.detail-panel {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    background: #fafafa;
+}
+
+.detail-panel.hidden {
+    display: none;
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.detail-header h2 {
+    font-size: 1.8em;
+    color: #333;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: #999;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    color: #e74c3c;
+}
+
+.detail-location p {
+    margin: 2px 0;
+}
+
+#detail-neighborhood {
+    font-size: 1.1em;
+    color: #444;
+    font-weight: 500;
+}
+
+#detail-borough {
+    font-size: 0.9em;
+    color: #888;
+}
+
+.detail-rent {
+    margin: 15px 0;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.rent-label {
+    display: block;
+    font-size: 0.8em;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+}
+
+.rent-value {
+    font-size: 2em;
+    font-weight: 700;
+    color: #2171b5;
+}
+
+.yearly-section {
+    margin-top: 15px;
+}
+
+.yearly-section h4 {
+    font-size: 0.85em;
+    color: #666;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.yearly-list {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.yearly-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.yearly-item:last-child {
+    border-bottom: none;
+}
+
+.yearly-item .year {
+    font-weight: 500;
+    color: #555;
+}
+
+.yearly-item .yearly-rent {
+    font-weight: 600;
+    color: #2171b5;
+}
+
+.no-data {
+    padding: 15px;
+    color: #999;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Hover Panel */
+.hover-panel {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    min-height: 120px;
+}
+
+.hover-panel.hidden {
+    display: none;
+}
+
+.hover-panel .instruction {
+    color: #999;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.hover-info h3 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.hover-info .neighborhood {
+    font-size: 1em;
+    color: #555;
+    margin: 2px 0;
+}
+
+.hover-info .borough {
+    font-size: 0.9em;
+    color: #888;
+    margin: 2px 0 10px 0;
+}
+
+.hover-info .rent-value {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #2171b5;
+}
+
+/* Legend Section */
+.legend-section {
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.legend-section h4 {
+    font-size: 0.85em;
+    color: #666;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.legend-scale {
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.legend-color {
+    width: 24px;
+    height: 16px;
+    margin-right: 10px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    flex-shrink: 0;
+}
+
+.legend-label {
+    font-size: 0.8em;
+    color: #555;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    font-size: 0.8em;
+    color: #888;
+}
+
+.sidebar-footer a {
+    color: #2171b5;
+    text-decoration: none;
+}
+
+.sidebar-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Map Container */
+#map {
+    flex: 1;
+    height: 100vh;
+}
+
+/* Error Message */
+.error-message {
+    text-align: center;
+    padding: 20px;
+}
+
+.error-message h3 {
+    color: #e74c3c;
+    margin-bottom: 10px;
+}
+
+.error-message p {
+    color: #666;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 40vh;
+        order: 2;
+    }
+
+    #map {
+        width: 100%;
+        height: 60vh;
+        order: 1;
+    }
+
+    .sidebar-header h1 {
+        font-size: 1.2em;
+    }
+
+    .slider-section,
+    .hover-panel,
+    .detail-panel {
+        padding: 15px;
+    }
+
+    .legend-section {
+        padding: 15px;
+    }
+
+    .detail-header h2 {
+        font-size: 1.4em;
+    }
+
+    .rent-value {
+        font-size: 1.6em;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        max-height: 50vh;
+    }
+
+    #map {
+        height: 50vh;
+    }
+
+    .slider-section h3,
+    .legend-section h4,
+    .yearly-section h4 {
+        font-size: 0.75em;
+    }
+}
+
+/* Leaflet Customizations */
+.leaflet-container {
+    font-family: inherit;
+}
+
+.leaflet-control-attribution {
+    font-size: 10px;
+}
+
+.leaflet-control-zoom {
+    border: none !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-control-zoom a {
+    background: white !important;
+    color: #333 !important;
+    border: none !important;
+}
+
+.leaflet-control-zoom a:hover {
+    background: #f0f0f0 !important;
+}

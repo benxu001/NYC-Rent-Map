@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYC Rent Prices by Zip Code</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Left Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <h1>NYC Rent Prices</h1>
+            <p class="subtitle">Average Rent by Zip Code</p>
+        </div>
+
+        <!-- Time Slider Section -->
+        <div class="slider-section">
+            <h3>Select Month</h3>
+            <div class="slider-container">
+                <input type="range" id="time-slider" min="0" max="59" value="59">
+                <div class="slider-labels">
+                    <span id="slider-start">Jan 2021</span>
+                    <span id="slider-end">Dec 2025</span>
+                </div>
+            </div>
+            <div class="current-date">
+                <span id="current-month">December 2025</span>
+            </div>
+        </div>
+
+        <!-- Detail Panel (shows when zip code is clicked) -->
+        <div id="detail-panel" class="detail-panel hidden">
+            <div class="detail-header">
+                <h2 id="detail-zipcode">--</h2>
+                <button id="close-detail" class="close-btn">&times;</button>
+            </div>
+            <div class="detail-location">
+                <p id="detail-neighborhood"></p>
+                <p id="detail-borough"></p>
+            </div>
+            <div class="detail-rent">
+                <div class="rent-current">
+                    <span class="rent-label">Average Rent</span>
+                    <span id="detail-rent-value" class="rent-value">--</span>
+                </div>
+            </div>
+            <div class="yearly-section">
+                <h4>Yearly Averages</h4>
+                <div id="yearly-list" class="yearly-list"></div>
+            </div>
+        </div>
+
+        <!-- Hover Info (shows when hovering) -->
+        <div id="hover-panel" class="hover-panel">
+            <p class="instruction">Hover over a zip code to see details</p>
+            <p class="instruction">Click to pin and see yearly data</p>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend-section">
+            <h4>Rent Scale</h4>
+            <div id="legend-scale" class="legend-scale"></div>
+        </div>
+
+        <!-- Attribution -->
+        <div class="sidebar-footer">
+            <p>Data: <a href="https://www.zillow.com/research/data/" target="_blank">Zillow Research</a></p>
+        </div>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+
+    <!-- Application JS -->
+    <script src="js/data.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

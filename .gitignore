@@ -1,0 +1,9 @@
+# Raw data files (large, not needed for website)
+data/raw/
+
+# OS files
+.DS_Store
+
+# Editor files
+*.swp
+*.swo
