@@ -1,4 +1,4 @@
-# NYC Rent Map (Zip Code Choropleth)
+# NYC Rent Map
 
 An interactive map of New York City that visualizes **average rent by ZIP code**.
 
@@ -11,13 +11,16 @@ An interactive map of New York City that visualizes **average rent by ZIP code**
 https://benxu001.github.io/NYC-Rent-Map/
 
 
+## Data
+
+https://www.zillow.com/research/data/
+
+
 ## Features
 
 - Interactive choropleth map of NYC ZIP codes
 - Hover/click interactions to inspect a ZIP code
-- Clean separation between:
-  - **data preparation** (Python scripts)
-  - **visualization** (HTML/CSS/JS)
+- Comparison between starting and ending rent from selected dates
 
 
 ## Tech Stack
