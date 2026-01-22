@@ -417,6 +417,14 @@ body {
     color: #2171b5;
 }
 
+.hover-rent-value.change-positive {
+    color: #e74c3c;
+}
+
+.hover-rent-value.change-negative {
+    color: #27ae60;
+}
+
 /* Map Legend (bottom-right of map) */
 .map-legend {
     background: white;
