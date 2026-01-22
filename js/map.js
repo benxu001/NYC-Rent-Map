@@ -359,7 +359,7 @@ const MapModule = {
         top10.onAdd = function() {
             const div = L.DomUtil.create('div', 'top10-panel');
             div.id = 'top10-panel';
-            div.innerHTML = '<h4>Top 10 by Change</h4><div id="top10-list"></div>';
+            div.innerHTML = '<h4>Top 10 Zip Codes by Change</h4><div id="top10-list"></div>';
 
             // Prevent map interactions when clicking on the panel
             L.DomEvent.disableClickPropagation(div);
@@ -370,6 +370,20 @@ const MapModule = {
 
         top10.addTo(this.map);
         this.updateTop10List();
+    },
+
+    /**
+     * Get neighborhood name for a zipcode from GeoJSON data
+     */
+    getNeighborhoodForZip: function(zipcode) {
+        if (!this.geojsonData) return '';
+
+        for (const feature of this.geojsonData.features) {
+            if (feature.properties.zipcode === zipcode) {
+                return feature.properties.PO_NAME || feature.properties.neighborhood || '';
+            }
+        }
+        return '';
     },
 
     /**
@@ -390,9 +404,11 @@ const MapModule = {
         for (const item of top10) {
             const changeClass = item.percentChange >= 0 ? 'change-positive' : 'change-negative';
             const sign = item.percentChange >= 0 ? '+' : '';
+            const neighborhood = this.getNeighborhoodForZip(item.zipcode);
             html += `
                 <div class="top10-item" data-zipcode="${item.zipcode}">
                     <span class="top10-zip">${item.zipcode}</span>
+                    <span class="top10-neighborhood">${neighborhood}</span>
                     <span class="top10-change ${changeClass}">${sign}${item.percentChange.toFixed(1)}%</span>
                 </div>
             `;
