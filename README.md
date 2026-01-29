@@ -20,25 +20,25 @@ New York City’s rental market has changed dramatically over the past decade. T
 
 ## Application Features
 
-### 🗺️ Interactive NYC ZIP Code Map
+### Interactive NYC ZIP Code Map
 - Choropleth map displaying average rent by ZIP code  
 - Color scale ranges from under $1,500 to $4,500+  
 - Gray areas indicate missing or unavailable data  
 
-### 📆 Dynamic Date Range Selector
+### Dynamic Date Range Selector
 - Users can select any start and end date between 2015–2025  
 - All rent values and summary metrics update instantly  
 
-### 📈 Rent Change Summary
+### Rent Change Summary
 - Displays citywide average rent  
 - Shows starting vs. ending rent  
 - Automatically calculates percent change for the selected range  
 
-### 🔝 Top 10 ZIP Codes by Rent Growth
+### Top 10 ZIP Codes by Rent Growth
 - Highlights ZIP codes with the largest percentage increase  
 - Useful for spotting rapid growth and gentrification patterns  
 
-### 🧭 Hover & Pin Interactions
+### Hover & Pin Interactions
 - Hover over ZIP codes to see rent details  
 - Pin ZIP codes to view year-by-year trends
 
